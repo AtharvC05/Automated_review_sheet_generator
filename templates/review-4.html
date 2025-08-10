@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Filling Interface</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/common-styles.css') }}">
+</head>
+<body>
+    <div class="page-header">
+    <div class="header-left"></div>
+    <div class="header-center">
+        <h1>Project Review - IV</h1>
+    </div>
+    <div class="menu-container">
+        <button class="menu-toggle" onclick="toggleMenu()">
+            <span class="menu-line"></span>
+            <span class="menu-line"></span>
+            <span class="menu-line"></span>
+        </button>
+        
+        <div class="menu-dropdown" id="menuDropdown">
+            <!-- Database Management -->
+            <a href="/data-manager" class="menu-item">
+                <span class="icon">🗄️</span>
+                Database Manager
+            </a>
+            <a href="/scheduler" class="menu-item current">
+                <span class="icon">📅</span>
+                Review Scheduler
+            </a>
+            <div class="menu-divider"></div>
+            
+            <!-- Review Pages -->
+            <a href="/review1" class="menu-item">
+                <span class="icon">📝</span>
+                Review I - Scope
+            </a>
+            
+            <a href="/review2" class="menu-item">
+                <span class="icon">🔍</span>
+                Review II - Design
+            </a>
+            
+            <a href="/review3" class="menu-item">
+                <span class="icon">⚙️</span>
+                Review III - Implementation
+            </a>
+            
+            <a href="/review4" class="menu-item">
+                <span class="icon">🧪</span>
+                Review IV - Testing
+            </a>
+            
+            <a href="/review5" class="menu-item">
+                <span class="icon">📊</span>
+                Review V - Final
+            </a>
+            
+            <div class="menu-divider"></div>
+            
+            <!-- Additional Options -->
+            <a href="/" class="menu-item">
+                <span class="icon">🏠</span>
+                Home
+            </a>
+        </div>
+    </div>
+<div class="content-wrapper">
+    <!-- Your form goes here -->
+
+    <form id="form-data">
+        
+        <label for="group_id">Group ID:</label>
+        <input type="text" id="group_id" name="group_id" required placeholder="eg.BIA-01">
+
+        <label for="date">Date:</label>
+        <input type="date" id="date" name="date" required>
+
+        <!-- New Section for Implementation Review -->
+<div class="section">
+                <h3>IMPLEMENTATION AND TESTING</h3>
+                <div class="question">
+                    <label>1. Is every feature tested?</label>
+                    <div class="radio-group">
+                        <input type="radio" id="yes1" name="que_4.1.1" value="Y" required><label for="yes1">Yes</label>
+                        <input type="radio" id="no1" name="que_4.1.1" value="N"><label for="no1">No</label>
+                        <input type="radio" id="na1" name="que_4.1.1" value="NA"><label for="na1">N/A</label>
+                        <input type="radio" id="nc1" name="que_4.1.1" value="NC"><label for="nc1">NC</label>
+                    </div>
+                </div>
+                <div class="question">
+                    <label>2. Are all functions, user screens and navigation tested?</label>
+                    <div class="radio-group">
+                        <input type="radio" id="yes2" name="que_4.1.2" value="Y" required><label for="yes2">Yes</label>
+                        <input type="radio" id="no2" name="que_4.1.2" value="N"><label for="no2">No</label>
+                        <input type="radio" id="na2" name="que_4.1.2" value="NA"><label for="na2">N/A</label>
+                        <input type="radio" id="nc2" name="que_4.1.2" value="NC"><label for="nc2">NC</label>
+                    </div>
+                </div>
+                <div class="question">
+                    <label>3. Are test cases designed? (manual and automated)</label>
+                    <div class="radio-group">
+                        <input type="radio" id="yes3" name="que_4.1.3" value="Y" required><label for="yes3">Yes</label>
+                        <input type="radio" id="no3" name="que_4.1.3" value="N"><label for="no3">No</label>
+                        <input type="radio" id="na3" name="que_4.1.3" value="NA"><label for="na3">N/A</label>
+                        <input type="radio" id="nc3" name="que_4.1.3" value="NC"><label for="nc3">NC</label>
+                    </div>
+                </div>
+                <div class="question">
+                    <label>4. Is testing tool used?</label>
+                    <div class="radio-group">
+                        <input type="radio" id="yes4" name="que_4.1.4" value="Y" required><label for="yes4">Yes</label>
+                        <input type="radio" id="no4" name="que_4.1.4" value="N"><label for="no4">No</label>
+                        <input type="radio" id="na4" name="que_4.1.4" value="NA"><label for="na4">N/A</label>
+                        <input type="radio" id="nc4" name="que_4.1.4" value="NC"><label for="nc4">NC</label>
+                    </div>
+                </div>
+                <div class="question">
+                    <label>5. Is result analysis done properly and proper conclusion drawn?</label>
+                    <div class="radio-group">
+                        <input type="radio" id="yes5" name="que_4.1.5" value="Y" required><label for="yes5">Yes</label>
+                        <input type="radio" id="no5" name="que_4.1.5" value="N"><label for="no5">No</label>
+                        <input type="radio" id="na5" name="que_4.1.5" value="NA"><label for="na5">N/A</label>
+                        <input type="radio" id="nc5" name="que_4.1.5" value="NC"><label for="nc5">NC</label>
+                    </div>
+                </div>
+                <div class="question">
+                    <label>6. Implementation status (code completion in percentage)</label>
+                    <div class="numeric-input">
+                        <input type="number" name="que_4.1.6" min="0" max="10" step="0.5" required>
+                    </div>
+                </div>
+            </div>
+
+        <div class="table-responsive">
+            <h2 class="header">STUDENT PERFORMANCE EVALUATION</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th rowspan="2">Particulars</th>
+                        <th colspan="4">Marks (25M) Group Members</th>
+                    </tr>
+                    <tr>
+                        <th>1</th>
+                        <th>2</th>
+                        <th>3</th>
+                        <th>4</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1.Implementation(100%)(5M)</td>
+                        <td><input type="number" name="f4.1.1" class="marks" data-member="1" max="5" min="0"></td>
+                        <td><input type="number" name="f4.2.1" class="marks" data-member="2" max="5" min="0"></td>
+                        <td><input type="number" name="f4.3.1" class="marks" data-member="3" max="5" min="0"></td>
+                        <td><input type="number" name="f4.4.1" class="marks" data-member="4" max="5" min="0"></td>
+                    </tr>
+                    <tr>
+                        <td>2.Testing,Resultsand PerformanceEvaluation(5 M)</td>
+                        <td><input type="number" name="f4.1.2" class="marks" data-member="1"max="5" min="0"></td>
+                        <td><input type="number" name="f4.2.2" class="marks" data-member="2" max="5" min="0"></td>
+                        <td><input type="number" name="f4.3.2" class="marks" data-member="3" max="5" min="0"></td>
+                        <td><input type="number" name="f4.4.2" class="marks" data-member="4"max="5" min="0"></td>
+                    </tr>
+                    <tr>
+                        <td>3.Publications(5M)</td>
+                        <td><input type="number" name="f4.1.3" class="marks" data-member="1" max="5" min="0"></td>
+                        <td><input type="number" name="f4.2.3" class="marks" data-member="2" max="5" min="0"></td>
+                        <td><input type="number" name="f4.3.3" class="marks" data-member="3" max="5" min="0"></td>
+                        <td><input type="number" name="f4.4.3" class="marks" data-member="4" max="5" min="0"></td>
+
+                    </tr>
+                    <tr>
+                        <td>4.Presentation skills(5M)</td>
+                        <td><input type="number" name="f4.1.4" class="marks" data-member="1" max="5" min="0"></td>
+                        <td><input type="number" name="f4.2.4" class="marks" data-member="2" max="5" min="0"></td>
+                        <td><input type="number" name="f4.3.4" class="marks" data-member="3" max="5" min="0"></td>
+                        <td><input type="number" name="f4.4.4" class="marks" data-member="4" max="5" min="0"></td>
+                    </tr>
+                    <tr>
+                        <td> 5.Questionand Answer(5 M)</td>
+                        <td><input type="number" name="f4.1.5" class="marks" data-member="1" max="5" min="0"></td>
+                        <td><input type="number" name="f4.2.5" class="marks" data-member="2" max="5" min="0"></td>
+                        <td><input type="number" name="f4.3.5" class="marks" data-member="3" max="5" min="0"></td>
+                        <td><input type="number" name="f4.4.5" class="marks" data-member="4" max="5" min="0"></td>
+                    </tr>
+                    
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td>Total (25M)</td>
+                        <td><input type="number" name="f4.1.s1" class="total" readonly></td>
+                        <td><input type="number" name="f4.2.s1" class="total" readonly></td>
+                        <td><input type="number" name="f4.3.s1" class="total" readonly></td>
+                        <td><input type="number" name="f4.4.s1" class="total" readonly></td>
+                    </tr>
+    
+                </tfoot>
+            </table>
+        </div>
+         <div class="comment-box">
+            <label for="comments">Comments:</label>
+            <textarea id="comments" name="c4" placeholder="Enter any additional comments here"></textarea>
+         </div>
+
+         <div class="button-group">
+            <button type="button" id="back-review" onclick="previousReview()">Back</button>
+            <button type="button" id="generate-pdf" onclick="submitForm()">Generate PDF</button>
+            <button type="button" id="next-review" onclick="nextReview()">Next Review</button>
+        </div>
+    </form>
+</div>
+    <script>
+        // Initialize form on load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSavedData();
+            setupEventListeners();
+            calculateTotals(); // Initial calculation
+        });
+    
+        // Load saved data from session storage
+        function loadSavedData() {
+            const savedData = sessionStorage.getItem('review2_data') || sessionStorage.getItem('review1_data');
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                // Auto-fill common fields
+                document.getElementById('group_id').value = data.group_id || '';
+                document.getElementById('date').value = data.date || '';
+                
+                // Auto-fill other fields if they exist in the form
+                ['project_title', 'guide_name', 'mentor_name', 'mentor_email', 'mentor_mobile'].forEach(field => {
+                    if (document.getElementById(field)) {
+                        document.getElementById(field).value = data[field] || '';
+                    }
+                });
+            }
+        }
+    
+        // Set up all event listeners
+        function setupEventListeners() {
+            // Marks calculation
+            document.querySelectorAll('.marks').forEach(input => {
+                input.addEventListener('input', handleMarkInput);
+            });
+    
+            // Group ID auto-fill
+            const groupIdInput = document.getElementById('group_id');
+            if (groupIdInput) {
+                groupIdInput.addEventListener('change', fetchGroupDetails);
+            }
+        }
+    
+        // Handle mark input with validation
+        function handleMarkInput(e) {
+            const input = e.target;
+            const max = parseFloat(input.getAttribute('max')) || Infinity;
+            const value = parseFloat(input.value) || 0;
+            
+            // Validate input
+            if (value > max) {
+                input.value = max;
+            }
+            
+            calculateTotals();
+        }
+    
+        // Calculate totals for all members
+        function calculateTotals() {
+            for (let i = 1; i <= 4; i++) {
+                let total = 0;
+                let valid = true;
+                
+                document.querySelectorAll(`.marks[data-member="${i}"]`).forEach(input => {
+                    const value = parseFloat(input.value);
+                    if (!isNaN(value)) {
+                        total += value;
+                    } else {
+                        valid = false;
+                        input.classList.add('error');
+                    }
+                });
+                
+                const totalField = document.querySelector(`.total[name="f4.${i}.s1"]`);
+                if (totalField) {
+                    totalField.value = valid ? total : 'Invalid';
+                    totalField.classList.toggle('error', !valid);
+                }
+            }
+        }
+    
+        // Submit form to generate PDF
+        async function submitForm() {
+            // Validate form first
+            if (!validateForm()) return;
+    
+            const form = document.getElementById('form-data');
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+    
+            try {
+                // Show loading state
+                const submitBtn = document.querySelector('button[onclick="submitForm()"]');
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Generating PDF...';
+    
+                const response = await fetch('/generate-pdf-review4', {  // Updated endpoint
+                    method: 'POST',
+                    body: JSON.stringify(data),
+                    headers: { 'Content-Type': 'application/json' }
+                });
+    
+                if (!response.ok) {
+                    throw new Error(await response.text());
+                }
+    
+                // Handle PDF download
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = 'Review-IV_Form.pdf';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(url);
+    
+            } catch (error) {
+                console.error('PDF generation failed:', error);
+                alert(`Failed to generate PDF: ${error.message}`);
+            } finally {
+                // Reset button state
+                const submitBtn = document.querySelector('button[onclick="submitForm()"]');
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Generate PDF';
+                }
+            }
+        }
+    
+        // Form validation
+        function validateForm() {
+            let isValid = true;
+            
+            // Validate required fields
+            const requiredFields = ['group_id', 'date'];
+            requiredFields.forEach(field => {
+                const element = document.getElementById(field);
+                if (element && !element.value.trim()) {
+                    element.classList.add('error');
+                    isValid = false;
+                } else if (element) {
+                    element.classList.remove('error');
+                }
+            });
+    
+            if (!isValid) {
+                alert('Please fill all required fields and ensure all marks are valid numbers');
+            }
+    
+            return isValid;
+        }
+    
+        // Fetch group details from backend
+        async function fetchGroupDetails() {
+            const groupId = document.getElementById('group_id').value.trim();
+            if (!groupId) return;
+    
+            try {
+                const response = await fetch(`/fetch/${groupId}`);
+                if (!response.ok) {
+                    throw new Error(await response.text());
+                }
+    
+                const data = await response.json();
+                populateForm(data);
+    
+            } catch (error) {
+                console.error('Failed to fetch group details:', error);
+                alert('Failed to load group details. Please check the group ID.');
+            }
+        }
+    
+        // Populate form with fetched data
+        function populateForm(data) {
+            const fields = {
+                'project_title': data.project_title,
+                'guide_name': data.guide_name,
+                'mentor_name': data.mentor_name,
+                'mentor_email': data.mentor_email,
+                'mentor_mobile': data.mentor_mobile
+            };
+    
+            Object.entries(fields).forEach(([id, value]) => {
+                const element = document.getElementById(id);
+                if (element) element.value = value || '';
+            });
+    
+            // Populate member details
+            if (data.members && Array.isArray(data.members)) {
+                data.members.forEach((member, index) => {
+                    const fields = [
+                        `roll_no_${index + 1}`,
+                        `student_name_${index + 1}`,
+                        `contact_details_${index + 1}`
+                    ];
+                    
+                    fields.forEach(field => {
+                        const element = document.getElementById(field);
+                        if (element) {
+                            element.value = member[field.split('_')[0]] || '';
+                        }
+                    });
+                });
+            }
+        }
+    
+        
+         // Navigation functions
+         function nextReview() {
+                saveFormData();
+                window.location.href = '/review5';
+            }
+        
+            function previousReview() {
+                saveFormData();
+                window.location.href = '/review3';
+            }
+    
+        function saveFormData() {
+            const formData = new FormData(document.getElementById('form-data'));
+            const data = Object.fromEntries(formData.entries());
+            sessionStorage.setItem('review4_data', JSON.stringify(data));
+        }
+        // Header hide/show on scroll functionality
+let lastScrollTop = 0;
+let scrollThreshold = 5;
+let isHeaderVisible = true;
+
+function handleScroll() {
+    const header = document.querySelector('.page-header');
+    const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+    if (Math.abs(currentScrollTop - lastScrollTop) < scrollThreshold) {
+        return;
+    }
+
+    // Hide header when scrolling down
+    if (currentScrollTop > lastScrollTop && currentScrollTop > 100 && isHeaderVisible) {
+        header.classList.add('hidden');
+        isHeaderVisible = false;
+    }
+    // Show header when scrolling up
+    else if (currentScrollTop < lastScrollTop && !isHeaderVisible) {
+        header.classList.remove('hidden');
+        isHeaderVisible = true;
+    }
+
+    // Optional: Add scrolled class for visual feedback
+    if (currentScrollTop > 80) {
+        header.classList.add('scrolled');
+    } else {
+        header.classList.remove('scrolled');
+    }
+
+    lastScrollTop = currentScrollTop;
+}
+
+// Throttling for better performance
+let scrollTimer = null;
+function throttledScroll() {
+    if (scrollTimer) return;
+    scrollTimer = setTimeout(() => {
+        handleScroll();
+        scrollTimer = null;
+    }, 10);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Your existing DOMContentLoaded code...
+    window.addEventListener('scroll', throttledScroll, { passive: true });
+});
+
+    </script>
+     <script>
+        let menuOpen = false;
+
+        function toggleMenu() {
+            const menuToggle = document.querySelector('.menu-toggle');
+            const menuDropdown = document.getElementById('menuDropdown');
+            
+            menuOpen = !menuOpen;
+            
+            if (menuOpen) {
+                menuToggle.classList.add('active');
+                menuDropdown.classList.add('show');
+            } else {
+                menuToggle.classList.remove('active');
+                menuDropdown.classList.remove('show');
+            }
+        }
+
+        // Close menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const menuContainer = document.querySelector('.menu-container');
+            
+            if (!menuContainer.contains(event.target) && menuOpen) {
+                toggleMenu();
+            }
+        });
+
+        // Close menu when pressing Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && menuOpen) {
+                toggleMenu();
+            }
+        });
+
+        // Highlight current page
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPath = window.location.pathname;
+            const menuItems = document.querySelectorAll('.menu-item');
+            
+            menuItems.forEach(item => {
+                if (item.getAttribute('href') === currentPath) {
+                    item.classList.add('current');
+                }
+            });
+        });
+    </script>
+    
+    
+</body>
+</html>

@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project Data Manager</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/handsontable@14.1.0/dist/handsontable.full.min.css">
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+    }
+    .app-container {
+      max-width: 1800px;
+      margin: 0 auto;
+      padding: 10px;
+    }
+    .app-header {
+      position: sticky;
+      top: 0;
+      background: white;
+      padding: 7px 25px 7px 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      width: 100%;
+      min-height: 38px;
+      z-index: 40;
+      gap: 0;
+    }
+    .header-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #2c3e50;
+      margin-right: 38px;
+      white-space: nowrap;
+      transition: color 0.3s;
+      text-shadow: none;
+    }
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1 1 auto;
+    }
+    .back-btn {
+      margin-left: auto;
+      background: #3498db;
+      color: white;
+      border: none;
+      padding: 7px 18px;
+      border-radius: 7px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 13px;
+      min-height: 30px;
+      transition: all 0.3s ease;
+    }
+    .back-btn:hover {
+      background: #2980b9;
+      transform: translateY(-2px);
+      color: white;
+    }
+    .btn {
+      padding: 7px 16px;
+      border: none;
+      border-radius: 7px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 13px;
+      min-height: 30px;
+    }
+    .btn-primary { background: #27ae60; color: white; }
+    .btn-primary:hover { background: #219a52; transform: translateY(-2px); }
+    .btn-secondary { background: #3498db; color: white; }
+    .btn-secondary:hover { background: #2980b9; transform: translateY(-2px); }
+    .btn-outline { background: white; color: #7f8c8d; border: 2px solid #bdc3c7; }
+    .btn-outline:hover { background: #ecf0f1; border-color: #95a5a6; }
+    .search-input {
+      padding: 7px 12px;
+      border: 2px solid #bdc3c7;
+      border-radius: 5px;
+      font-size: 13px;
+      min-width: 220px;
+      min-height: 30px;
+      background: #fff;
+      color: #222;
+      transition: background 0.3s, color 0.3s, border 0.3s;
+    }
+    .search-input::placeholder {
+      color: #7f8c8d;
+      opacity: 1;
+      transition: color 0.3s;
+    }
+    .spreadsheet-container {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+      margin-bottom: 16px;
+      width: 100%;
+      min-width: 1150px;
+      min-height: 360px;
+      height: 82vh;
+      max-height: 88vh;
+      overflow: auto;
+    }
+    #spreadsheet { min-width: 1200px; height: 100%; }
+    .status-bar {
+      background: white;
+      padding: 7px 16px;
+      min-height: 24px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      font-size: 13px;
+    }
+    .loading-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10000;
+      flex-direction: column;
+      color: white;
+    }
+    .loading-spinner {
+      width: 50px; height: 50px;
+      border: 4px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s ease-in-out infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .hidden { display: none !important; }
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 20px;
+      border-radius: 8px;
+      color: white;
+      font-weight: 600;
+      z-index: 10001;
+      animation: slideIn 0.3s ease;
+    }
+    .notification.success { background: #27ae60; }
+    .notification.error { background: #e74c3c; }
+    @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+    .unsaved-indicator { color: #e74c3c; font-weight: 600; }
+    @media (max-width: 1200px) {
+      .app-container { max-width: 99vw; }
+      .spreadsheet-container, #spreadsheet { min-width: 800px; }
+      .search-input { min-width: 120px; }
+    }
+    @media (max-width: 700px) {
+      .app-header { flex-direction: column; align-items: stretch;}
+      .header-controls { flex-wrap: wrap; gap: 8px; }
+      .header-title { font-size: 18px; margin-right: 12px; margin-bottom: 6px;}
+      .search-input, .btn, .back-btn { width: 100%; }
+      .spreadsheet-container { min-width: 340px!important; }
+    }
+    /* Search highlights */
+    body .handsontable td.htSearchResult,
+    body .handsontable th.htSearchResult {
+      background-color: #2980b9 !important;
+      color: #fff !important;
+      box-shadow: 0 0 0 2px #2980b9 inset !important;
+      z-index: 2 !important;
+    }
+  </style>
+</head>
+<body>
+<div class="app-container">
+  <header class="app-header">
+    <span class="header-title">📊 Project Data Manager</span>
+    <div class="header-controls">
+  <button class="btn btn-primary" id="save-btn">💾 Save Changes</button>
+  <button class="btn btn-secondary" id="reload-btn">🔄 Reload Data</button>
+  <button class="btn btn-outline" id="add-group-btn">➕ Add Group</button>
+  <!-- FIXED: Correct export button -->
+  <button class="btn btn-outline" id="export-excel-btn">📄 Export Excel</button>
+  <!-- FIXED: Correct import button with unique ID -->
+  <button type="button" id="import-excel-btn" class="btn btn-primary">📥 Import Excel</button>
+  <input type="text" id="search-input" placeholder="Search..." class="search-input">
+</div>
+
+<!-- ADD THIS: Hidden file input (place right after header) -->
+<input type="file" id="excel-file-input" accept=".xlsx,.xls" style="display: none;">
+
+    <a href="/" class="back-btn">← Back to Reviews</a>
+  </header>
+  <div class="spreadsheet-container">
+    <div id="spreadsheet"></div>
+  </div>
+  <div class="status-bar">
+    <div>
+      <span id="record-count">Loading...</span>
+      <span id="unsaved-indicator" class="unsaved-indicator hidden">● Unsaved changes</span>
+    </div>
+    <div id="selection-info"></div>
+  </div>
+  <div id="loading-overlay" class="loading-overlay hidden">
+    <div class="loading-spinner"></div>
+    <div style="margin-top: 15px;">Loading...</div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/handsontable@14.1.0/dist/handsontable.full.min.js"></script>
+<script>
+class ProjectDataManager {
+  constructor() {
+    this.hot = null;
+    this.originalData = [];
+    this.currentData = [];
+    this.hasUnsavedChanges = false;
+    // FIXED: Removed spacer columns and corrected column mapping
+    this.columns = [
+      { data: 'group_id', title: 'Group No.', width: 100 },
+      { data: 'roll_no', title: 'Roll No.', width: 100 },
+      { data: 'student_name', title: 'Name of the group member', width: 200 },
+      { data: 'project_title', title: 'Title', width: 350 },
+      { data: 'guide_name', title: 'Name of the guide', width: 180 },
+      { data: 'mentor_name', title: 'Mentor Name', width: 150 },
+      { data: 'mentor_email', title: 'Mentor Email', width: 180 },
+      { data: 'mentor_mobile', title: 'Mentor Mobile', width: 120 },
+      { data: 'contact_details', title: 'Contact Details', width: 150 }
+    ];
+    this.init();
+  }
+
+  async init() {
+    this.setupEventListeners();
+    this.showLoadingOverlay();
+    await this.loadData();
+    this.initializeHandsontable();
+    this.hideLoadingOverlay();
+    this.updateStatusBar();
+  }
+
+  setupEventListeners() {
+    console.log('Setting up event listeners...');
+    
+    document.getElementById('save-btn').addEventListener('click', () => this.saveChanges());
+    document.getElementById('reload-btn').addEventListener('click', () => this.reloadData());
+    document.getElementById('add-group-btn').addEventListener('click', () => this.addGroup());
+    document.getElementById('export-excel-btn').addEventListener('click', () => this.exportToExcel());
+    document.getElementById('search-input').addEventListener('input', (e) => this.search(e.target.value));
+    
+    // FIXED: Import functionality
+    const importBtn = document.getElementById('import-excel-btn');
+    const fileInput = document.getElementById('excel-file-input');
+    
+    console.log('Import button found:', importBtn);
+    console.log('File input found:', fileInput);
+    
+    if (importBtn) {
+        importBtn.addEventListener('click', () => {
+            console.log('Import button clicked!');
+            if (fileInput) {
+                fileInput.click();
+            } else {
+                console.error('File input not found!');
+            }
+        });
+    } else {
+        console.error('Import button not found!');
+    }
+    
+    if (fileInput) {
+        fileInput.addEventListener('change', (e) => {
+            console.log('File selected:', e.target.files);
+            if (e.target.files.length > 0) {
+                this.importExcel(e.target.files[0]); // FIXED: Pass single file, not files array
+            }
+        });
+    } else {
+        console.error('File input element not found!');
+    }
+  }
+
+
+  async loadData() {
+    try {
+      const response = await fetch('/api/projects');
+      const result = await response.json();
+      if (result.success) {
+        this.originalData = result.data;
+        this.currentData = this.transformDataToHierarchical(result.data);
+        this.hasUnsavedChanges = false;
+      } else {
+        throw new Error(result.error || 'Failed to load data');
+      }
+    } catch (error) {
+      this.showNotification('Error loading data: ' + error.message, 'error');
+      this.currentData = [];
+    }
+  }
+
+  transformDataToHierarchical(rawData) {
+    const groups = {};
+    
+    // Group members by group_id
+    rawData.forEach(item => {
+      if (!groups[item.group_id]) {
+        groups[item.group_id] = {
+          group_id: item.group_id,
+          project_title: item.project_title || '',
+          guide_name: item.guide_name || '',
+          mentor_name: item.mentor_name || '',
+          mentor_email: item.mentor_email || '',
+          mentor_mobile: item.mentor_mobile || '',
+          members: []
+        };
+      }
+      if (item.roll_no) { // Only add if roll_no exists
+        groups[item.group_id].members.push({
+          roll_no: item.roll_no || '',
+          student_name: item.student_name || '',
+          contact_details: item.contact_details || ''
+        });
+      }
+    });
+
+    // Convert to hierarchical format
+    const transformedData = [];
+    const mergeCells = [];
+    
+    Object.values(groups).forEach(group => {
+      const startRow = transformedData.length;
+      
+      // Ensure at least one member row exists
+      if (group.members.length === 0) {
+        group.members.push({ roll_no: '', student_name: '', contact_details: '' });
+      }
+      
+      // Add each member as a separate row
+      group.members.forEach((member, index) => {
+        const row = {
+          group_id: index === 0 ? group.group_id : '', // Only show group_id in first row
+          roll_no: member.roll_no,
+          student_name: member.student_name,
+          project_title: index === 0 ? group.project_title : '', // Only show title in first row
+          guide_name: index === 0 ? group.guide_name : '', // Only show guide in first row
+          mentor_name: index === 0 ? group.mentor_name : '', 
+          mentor_email: index === 0 ? group.mentor_email : '', 
+          mentor_mobile: index === 0 ? group.mentor_mobile : '', 
+          contact_details: member.contact_details
+        };
+        transformedData.push(row);
+      });
+
+      // Store merge cell information for later
+      if (group.members.length > 1) {
+        // Group No column merge (column 0)
+        mergeCells.push({row: startRow, col: 0, rowspan: group.members.length, colspan: 1});
+        // Project Title column merge (column 3)
+        mergeCells.push({row: startRow, col: 3, rowspan: group.members.length, colspan: 1});
+        // Guide Name column merge (column 4)
+        mergeCells.push({row: startRow, col: 4, rowspan: group.members.length, colspan: 1});
+        // Mentor columns merge (columns 5, 6, 7)
+        mergeCells.push({row: startRow, col: 5, rowspan: group.members.length, colspan: 1});
+        mergeCells.push({row: startRow, col: 6, rowspan: group.members.length, colspan: 1});
+        mergeCells.push({row: startRow, col: 7, rowspan: group.members.length, colspan: 1});
+      }
+    });
+
+    this.mergeCellsData = mergeCells;
+    return transformedData;
+  }
+
+  transformDataToOriginal(hierarchicalData) {
+    const originalFormat = [];
+    let currentGroup = null;
+    
+    hierarchicalData.forEach(row => {
+      // If group_id is present, this is the start of a new group
+      if (row.group_id) {
+        currentGroup = {
+          group_id: row.group_id,
+          project_title: row.project_title || '',
+          guide_name: row.guide_name || '',
+          mentor_name: row.mentor_name || '',
+          mentor_email: row.mentor_email || '',
+          mentor_mobile: row.mentor_mobile || ''
+        };
+      }
+      
+      // Add member data if valid and currentGroup exists
+      if (row.roll_no && currentGroup) {
+        originalFormat.push({
+          group_id: currentGroup.group_id,
+          project_title: currentGroup.project_title,
+          guide_name: currentGroup.guide_name,
+          mentor_name: currentGroup.mentor_name,
+          mentor_email: currentGroup.mentor_email,
+          mentor_mobile: currentGroup.mentor_mobile,
+          roll_no: row.roll_no,
+          student_name: row.student_name,
+          contact_details: row.contact_details
+        });
+      }
+    });
+    
+    return originalFormat;
+  }
+
+  initializeHandsontable() {
+    const container = document.getElementById('spreadsheet');
+    this.hot = new Handsontable(container, {
+      data: this.currentData,
+      columns: this.columns,
+      rowHeaders: true,
+      colHeaders: true,
+      contextMenu: true,
+      manualRowMove: true,
+      manualColumnMove: false,
+      manualRowResize: true,
+      manualColumnResize: true,
+      fillHandle: true,
+      fixedRowsTop: 0,
+      stretchH: 'all',
+      width: "100%",
+      height: "100%",
+      licenseKey: 'non-commercial-and-evaluation',
+      search: true,
+      mergeCells: this.mergeCellsData || [],
+      afterChange: (changes, source) => {
+        if (source !== 'loadData') {
+          this.markAsChanged();
+        }
+      },
+      afterSelection: (row, column, row2, column2) => {
+        this.updateSelectionInfo(row, column, row2, column2);
+      },
+      cells: function(row, col) {
+        const cellProperties = {};
+        
+        // Style group info columns (Group No, Title, Guide, Mentor columns)
+        if (col === 0 || col === 3 || col === 4 || col === 5 || col === 6 || col === 7) {
+          cellProperties.renderer = function(instance, td, row, col, prop, value) {
+            Handsontable.renderers.TextRenderer.apply(this, arguments);
+            td.style.backgroundColor = '#f8f9fa';
+            td.style.fontWeight = '600';
+            td.style.textAlign = 'center';
+            td.style.borderRight = '2px solid #dee2e6';
+          };
+        }
+        
+        return cellProperties;
+      }
+    });
+  }
+
+  markAsChanged() {
+    this.hasUnsavedChanges = true;
+    const indicator = document.getElementById('unsaved-indicator');
+    if (indicator) indicator.classList.remove('hidden');
+  }
+
+  updateSelectionInfo(row, column, row2, column2) {
+    const rowCount = Math.abs(row2 - row) + 1;
+    const colCount = Math.abs(column2 - column) + 1;
+    const selectionInfo = document.getElementById('selection-info');
+    if (selectionInfo) {
+      selectionInfo.textContent = `Selected: ${rowCount} row(s) × ${colCount} column(s)`;
+    }
+  }
+
+  updateStatusBar() {
+    const groupCount = this.currentData.filter(row => row.group_id).length;
+    const memberCount = this.currentData.length;
+    const recordCount = document.getElementById('record-count');
+    if (recordCount) {
+      recordCount.textContent = `${groupCount} group(s), ${memberCount} member(s)`;
+    }
+  }
+
+  addGroup() {
+    // Add 4 rows for a new group (assuming 4 members per group)
+    const existingGroups = this.currentData.filter(row => row.group_id).length;
+    const newGroupId = `BIA-${(existingGroups + 1).toString().padStart(2, '0')}`;
+    
+    const newRows = [];
+    for (let i = 0; i < 4; i++) {
+      newRows.push({
+        group_id: i === 0 ? newGroupId : '',
+        roll_no: '',
+        student_name: '',
+        project_title: i === 0 ? '' : '',
+        guide_name: i === 0 ? '' : '',
+        mentor_name: i === 0 ? '' : '',
+        mentor_email: i === 0 ? '' : '',
+        mentor_mobile: i === 0 ? '' : '',
+        contact_details: ''
+      });
+    }
+    
+    this.currentData.push(...newRows);
+    
+    // Add merge cells for new group
+    const startRow = this.currentData.length - 4;
+    const newMergeCells = [
+      {row: startRow, col: 0, rowspan: 4, colspan: 1}, // Group No
+      {row: startRow, col: 3, rowspan: 4, colspan: 1}, // Project Title
+      {row: startRow, col: 4, rowspan: 4, colspan: 1}, // Guide Name
+      {row: startRow, col: 5, rowspan: 4, colspan: 1}, // Mentor Name
+      {row: startRow, col: 6, rowspan: 4, colspan: 1}, // Mentor Email
+      {row: startRow, col: 7, rowspan: 4, colspan: 1}, // Mentor Mobile
+    ];
+    
+    this.hot.updateSettings({
+      data: this.currentData,
+      mergeCells: [...(this.mergeCellsData || []), ...newMergeCells]
+    });
+    
+    this.mergeCellsData = [...(this.mergeCellsData || []), ...newMergeCells];
+    this.markAsChanged();
+    this.updateStatusBar();
+  }
+
+  search(query) {
+    const searchPlugin = this.hot.getPlugin('search');
+    if (!query) {
+      searchPlugin.query('');
+      this.hot.render();
+      return;
+    }
+    searchPlugin.query(query);
+    this.hot.render();
+  }
+
+  // Import Excel functionality
+  async importExcel(file) {
+    if (!file) {
+      this.showNotification('Please select a file', 'error');
+      return;
+    }
+
+    if (this.hasUnsavedChanges) {
+      if (!confirm('You have unsaved changes. Importing will overwrite current data. Continue?')) {
+        return;
+      }
+    }
+
+    this.showLoadingOverlay();
+    try {
+      const formData = new FormData();
+      formData.append('excel', file);
+
+      const response = await fetch('/api/import-excel', {
+        method: 'POST',
+        body: formData
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        await this.loadData(); // Reload data from database
+        this.hot.updateSettings({
+          data: this.currentData,
+          mergeCells: this.mergeCellsData || []
+        });
+        this.hasUnsavedChanges = false;
+        const indicator = document.getElementById('unsaved-indicator');
+        if (indicator) indicator.classList.add('hidden');
+        this.updateStatusBar();
+        this.showNotification(result.message, 'success');
+      } else {
+        throw new Error(result.error || 'Failed to import Excel file');
+      }
+    } catch (error) {
+      this.showNotification('Error importing Excel: ' + error.message, 'error');
+    } finally {
+      this.hideLoadingOverlay();
+      // Reset file input
+      const fileInput = document.getElementById('excel-file-input');
+      if (fileInput) fileInput.value = '';
+    }
+  }
+
+  // Export Excel functionality
+  async exportToExcel() {
+    this.showLoadingOverlay();
+    try {
+      // Convert current data to original format for export
+      const exportData = this.transformDataToOriginal(this.hot.getData().map(row => {
+        const obj = {};
+        this.columns.forEach((col, index) => {
+          obj[col.data] = row[index] || '';
+        });
+        return obj;
+      }));
+
+      const response = await fetch('/api/export-excel', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ data: exportData })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to export Excel file');
+      }
+
+      // Create download link
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `Project_Data_${new Date().toISOString().split('T')[0]}.xlsx`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      this.showNotification('Excel file exported successfully!', 'success');
+    } catch (error) {
+      this.showNotification('Error exporting Excel: ' + error.message, 'error');
+    } finally {
+      this.hideLoadingOverlay();
+    }
+  }
+
+  async saveChanges() {
+    if (!this.hasUnsavedChanges) {
+      this.showNotification('No changes to save', 'info');
+      return;
+    }
+    
+    this.showLoadingOverlay();
+    try {
+      // Convert hierarchical data back to original format
+      const originalFormat = this.transformDataToOriginal(this.hot.getData().map(row => {
+        const obj = {};
+        this.columns.forEach((col, index) => {
+          obj[col.data] = row[index] || '';
+        });
+        return obj;
+      }));
+
+      const response = await fetch('/api/projects', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ data: originalFormat })
+      });
+      
+      const result = await response.json();
+      if (result.success) {
+        this.hasUnsavedChanges = false;
+        const indicator = document.getElementById('unsaved-indicator');
+        if (indicator) indicator.classList.add('hidden');
+        this.showNotification('Changes saved successfully!', 'success');
+        this.updateStatusBar();
+      } else {
+        throw new Error(result.error || 'Failed to save changes');
+      }
+    } catch (error) {
+      this.showNotification('Error saving changes: ' + error.message, 'error');
+    } finally {
+      this.hideLoadingOverlay();
+    }
+  }
+
+  async reloadData() {
+    if (this.hasUnsavedChanges) {
+      if (!confirm('You have unsaved changes. Are you sure you want to reload?')) return;
+    }
+    
+    this.showLoadingOverlay();
+    await this.loadData();
+    this.hot.updateSettings({
+      data: this.currentData,
+      mergeCells: this.mergeCellsData || []
+    });
+    this.hasUnsavedChanges = false;
+    const indicator = document.getElementById('unsaved-indicator');
+    if (indicator) indicator.classList.add('hidden');
+    this.updateStatusBar();
+    this.hideLoadingOverlay();
+    this.showNotification('Data reloaded successfully', 'success');
+  }
+
+  showLoadingOverlay() {
+    const overlay = document.getElementById('loading-overlay');
+    if (overlay) overlay.classList.remove('hidden');
+  }
+
+  hideLoadingOverlay() {
+    const overlay = document.getElementById('loading-overlay');
+    if (overlay) overlay.classList.add('hidden');
+  }
+
+  // FIXED: Import Excel functionality
+  async importExcel(file) {
+    console.log('importExcel called with file:', file);
+    
+    if (!file) {
+        this.showNotification('Please select a file', 'error');
+        return;
+    }
+
+    if (this.hasUnsavedChanges) {
+        if (!confirm('You have unsaved changes. Importing will overwrite current data. Continue?')) {
+            return;
+        }
+    }
+
+    this.showLoadingOverlay();
+    try {
+        const formData = new FormData();
+        formData.append('excel', file); // FIXED: Use 'excel' key to match backend
+
+        console.log('Sending file to /api/import-excel');
+
+        const response = await fetch('/api/import-excel', {
+            method: 'POST',
+            body: formData
+        });
+
+        console.log('Response status:', response.status);
+        
+        const result = await response.json();
+        console.log('Response result:', result);
+        
+        if (result.success) {
+            await this.loadData(); // Reload data from database
+            this.hot.updateSettings({
+                data: this.currentData,
+                mergeCells: this.mergeCellsData || []
+            });
+            this.hasUnsavedChanges = false;
+            const indicator = document.getElementById('unsaved-indicator');
+            if (indicator) indicator.classList.add('hidden');
+            this.updateStatusBar();
+            this.showNotification(result.message, 'success');
+        } else {
+            throw new Error(result.error || 'Failed to import Excel file');
+        }
+    } catch (error) {
+        console.error('Import error:', error);
+        this.showNotification('Error importing Excel: ' + error.message, 'error');
+    } finally {
+        this.hideLoadingOverlay();
+        // Reset file input
+        const fileInput = document.getElementById('excel-file-input');
+        if (fileInput) fileInput.value = '';
+    }
+  }
+
+
+  showNotification(message, type = 'success') {
+    // Remove existing notifications
+    document.querySelectorAll('.notification').forEach(n => n.remove());
+    
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 10000;
+      padding: 12px 20px;
+      border-radius: 4px;
+      color: white;
+      font-weight: bold;
+      max-width: 300px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    `;
+    
+    // Set background color based on type
+    switch(type) {
+      case 'success':
+        notification.style.backgroundColor = '#28a745';
+        break;
+      case 'error':
+        notification.style.backgroundColor = '#dc3545';
+        break;
+      case 'info':
+        notification.style.backgroundColor = '#17a2b8';
+        break;
+      default:
+        notification.style.backgroundColor = '#6c757d';
+    }
+    
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    
+    // Auto remove after 4 seconds
+    setTimeout(() => {
+      if (notification.parentNode) {
+        notification.remove();
+      }
+    }, 4000);
+  }
+}
+
+// Initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+  new ProjectDataManager();
+
+
+});
+
+</script>
+
+</body>
+</html>
