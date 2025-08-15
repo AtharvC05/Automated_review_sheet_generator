@@ -117,7 +117,10 @@ def process_fields(doc, data):
 
     return filled_count
 
-def generate_5_pdf(form_data, template_path="Review-V-Sheet.pdf"):
+def generate_5_pdf(form_data, template_path=None):
+    if template_path is None:
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        template_path = os.path.join(base_dir, "pdf_templates", "Review-V-Sheet.pdf")
     """Generate PDF with filled form fields for Sheet 5."""
     if not form_data:
         raise ValueError("form_data cannot be empty")
@@ -191,21 +194,6 @@ def generate_5_pdf(form_data, template_path="Review-V-Sheet.pdf"):
     doc = fitz.open(template_path)
     filled_count = process_fields(doc, field_values)
 
-    # Save PDF
-    out_dir = "generated_pdfs"
-    os.makedirs(out_dir, exist_ok=True)
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    output_file = f"Sheet5_Group_{group_id}_{timestamp}.pdf"
-    output_path = os.path.join(out_dir, output_file)
-
-    doc.save(output_path, garbage=4, deflate=True)
-    doc.close()
-
-    if not os.path.isfile(output_path):
-        raise IOError(f"PDF generation failed: output file missing: {output_path}")
-
-    logger.info(f"PDF generated: {output_path} with {filled_count} fields filled")
-    return output_path
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)

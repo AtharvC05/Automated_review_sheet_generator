@@ -9,8 +9,8 @@ import json
 from datetime import datetime
 
 # Import blueprints only
-import data_manager
-import scheduler
+import backend.data_manager as data_manager
+import backend.scheduler as scheduler
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
@@ -23,24 +23,24 @@ app.register_blueprint(scheduler.bp)
 
 # Import database functions
 try:
-    from sheet1 import fetch_project_details, connect_db
+    from backend.sheet1 import fetch_project_details, connect_db
     DATABASE_AVAILABLE = True
 except ImportError:
     DATABASE_AVAILABLE = False
 
 # Import PDF generation functions
 try:
-    from sheet1 import generate_fillable_pdf as generate_review1_pdf
+    from backend.sheet1 import generate_fillable_pdf as generate_review1_pdf
 except ImportError:
     generate_review1_pdf = None
 
 try:
-    from sheet2 import generate_2_pdf as generate_review2_pdf
+    from backend.sheet2 import generate_2_pdf as generate_review2_pdf
 except ImportError:
     generate_review2_pdf = None
 
 try:
-    from sheet3 import generate_3_pdf as generate_review3_pdf
+    from backend.sheet3 import generate_3_pdf as generate_review3_pdf
 except ImportError:
     generate_review3_pdf = None
 
@@ -50,7 +50,7 @@ except ImportError:
     generate_review4_pdf = None
 
 try:
-    from sheet5 import generate_5_pdf as generate_review5_pdf
+    from backend.sheet5 import generate_5_pdf as generate_review5_pdf
 except ImportError:
     generate_review5_pdf = None
 
@@ -120,10 +120,14 @@ def handle_pdf_generation(generate_function):
             return jsonify({"error": "Group ID is required"}), 400
 
         if generate_function == generate_review1_pdf:
-            template_path = data.get('template_path', 'Review-I-Sheet.pdf')
-            thread = SafeThread(target=generate_function, args=(data, template_path))
-        else:
-            thread = SafeThread(target=generate_function, args=(data,))
+             if 'template_path' in data:
+               template_path = data['template_path']
+             else:
+                base_dir = os.path.dirname(os.path.abspath(__file__))
+                template_path = os.path.join(base_dir, 'pdf_templates', 'Review-I-Sheet.pdf')
+    
+        thread = SafeThread(target=generate_function, args=(data, template_path))
+
         
         thread.start()
         thread.join()

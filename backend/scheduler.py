@@ -12,7 +12,7 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib import colors
 from reportlab.lib.units import inch
 from reportlab.platypus.tableofcontents import TableOfContents
-import sheet1  # For database connection
+import backend.sheet1 as sheet1  # For database connection
 
 logger = logging.getLogger(__name__)
 
